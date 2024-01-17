@@ -14,12 +14,12 @@ class process_img:
         height = int(self.img_in_processing.shape[0] * percent/100)
         dim = (width, height)
         self.img_in_processing = cv2.resize(self.img_in_processing,dim,interpolation=cv2.INTER_AREA)
-        
+
 
 
     def img_crop(self,):
 
-
+a
     def img_detect_contours(self,):
 
 
