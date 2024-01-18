@@ -2,7 +2,8 @@ import cv2
 
 def live_video_show():
     cap = cv2.VideoCapture(0, cv2.CAP_MSMF)  # Change 0 to the index of your camera if not the default
-
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 4656)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 3496)
     if not cap.isOpened():
         print("Error: Could not open video capture.")
         return
