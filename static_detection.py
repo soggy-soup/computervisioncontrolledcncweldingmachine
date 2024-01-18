@@ -42,6 +42,8 @@ class process_img:
 
     def img_detect_contours(self,):
         self.gray = cv2.cvtColor(self.img_in_processing, cv2.COLOR_RGB2GRAY)
+        #_, self.thresh = cv2.threshold(self.gray, 110, 255, cv2.THRESH_BINARY) #0-255, 0-black, 255-white https://docs.opencv.org/3.4/d7/d4d/tutorial_py_thresholding.html
+        _, self.thresh = cv2. adaptiveThreshold(self.gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C)
         _, self.thresh = cv2.threshold(self.gray, 125, 255, cv2.THRESH_BINARY) #0-255, 0-black, 255-white https://docs.opencv.org/3.4/d7/d4d/tutorial_py_thresholding.html
         #self.thresh = cv2. adaptiveThreshold(self.gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
         self.contours, self.heirarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
