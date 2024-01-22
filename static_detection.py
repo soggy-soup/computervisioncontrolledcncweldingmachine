@@ -1,6 +1,4 @@
-# import numpy as np
 import cv2
-
 
 class process_img:
     def __init__(self, img_path):
@@ -37,7 +35,7 @@ class process_img:
         self.img_in_processing = cv2.medianBlur(self.img_in_processing, 5)
 
     def img_bilateral_blur(self):
-        self.img_in_processing = cv2.bilateralFilter(self.img_in_processing, 9, 75, 75)
+        self.img_in_processing = cv2.bilateralFilter(self.img_in_processing, 11, 15, 15)
 
     def img_basic_blur(self):
         self.img_in_processing = cv2.blur(self.img_in_processing, (100, 100))
@@ -52,17 +50,17 @@ class process_img:
     def img_detect_HSV_contours(self):
         self.saturate = cv2.cvtColor(self.img_in_processing, cv2.COLOR_RGB2HSV)
         self.thresh = cv2.inRange(self.saturate, (0,0,105), (180,50,255))
+        self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         
     def img_draw_contours(self,):
-        self.img_in_processing = cv2.drawContours(self.img_read[175:3300, 535:3950], self.contours, -1, (0, 255, 0), 30)
+        self.img_in_processing = cv2.drawContours(self.img_read[175:3300, 535:3950], self.contours, -1, (0, 255, 0), 5)
 
-
+#https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
 test = process_img("C:\\Users\\Aidan\\Documents\\Projects\\CNC Welding Table\\CNCWelderCode\\computervisioncontrolledcncweldingmachine\\images\\othersideofplate.jpg")
 test.img_crop()
 test.img_bilateral_blur()
 test.img_detect_HSV_contours()
-test.img_show(test.saturate)
 test.img_show(test.thresh)
 test.img_draw_contours()
 test.img_show(test.img_in_processing)
