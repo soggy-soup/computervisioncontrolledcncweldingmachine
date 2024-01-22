@@ -29,13 +29,13 @@ class process_img:
         self.img_in_processing = self.img_in_processing[175:3300, 535:3950]
 
     def img_gaussian_blur(self):
-        self.img_in_processing = cv2.GaussianBlur(self.img_in_processing, (3, 3), 0)
+        self.img_in_processing = cv2.GaussianBlur(self.img_in_processing, (21, 21), 0)
 
     def img_median_blur(self):
         self.img_in_processing = cv2.medianBlur(self.img_in_processing, 5)
 
     def img_bilateral_blur(self):
-        self.img_in_processing = cv2.bilateralFilter(self.img_in_processing, 11, 15, 15)
+        self.img_in_processing = cv2.bilateralFilter(self.img_in_processing, 11, 175, 175)
 
     def img_basic_blur(self):
         self.img_in_processing = cv2.blur(self.img_in_processing, (100, 100))
@@ -49,22 +49,47 @@ class process_img:
     
     def img_detect_HSV_contours(self):
         self.saturate = cv2.cvtColor(self.img_in_processing, cv2.COLOR_RGB2HSV)
-        self.thresh = cv2.inRange(self.saturate, (0,0,105), (180,50,255))
-        self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3)))
+        self.thresh = cv2.inRange(self.saturate, (0,100,0), (50,255,200))
+        self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         
     def img_draw_contours(self,):
-        self.img_in_processing = cv2.drawContours(self.img_read[175:3300, 535:3950], self.contours, -1, (0, 255, 0), 5)
+        self.img_in_processing = cv2.drawContours(self.img_read[175:3300, 535:3950], self.contours, -1, (0, 0, 255), 10)
 
 #https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
-test = process_img("C:\\Users\\Aidan\\Documents\\Projects\\CNC Welding Table\\CNCWelderCode\\computervisioncontrolledcncweldingmachine\\images\\othersideofplate.jpg")
+test = process_img("images\\bothpieces.jpg")
+
 test.img_crop()
-test.img_bilateral_blur()
+test.img_gaussian_blur()
 test.img_detect_HSV_contours()
 test.img_show(test.thresh)
 test.img_draw_contours()
 test.img_show(test.img_in_processing)
 print(test.heirarchy)
+
+
+test2 = process_img("images\\leftpiece.jpg")
+test2.img_crop()
+test2.img_bilateral_blur()
+test2.img_detect_HSV_contours()
+test2.img_draw_contours()
+test2.img_show(test2.img_in_processing)
+
+combinedimage = cv2.addWeighted(test2.img_in_processing, .5, test.img_in_processing, 0.5, 0)
+
+aspect_ratio = combinedimage.shape[1] / combinedimage.shape[0]
+cv2.namedWindow("Display Image", cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_NORMAL)
+cv2.imshow("Display Image", combinedimage)
+
+while True:
+            key = cv2.waitKey(1)
+            if key == 27:
+                break
+
+            current_width = cv2.getWindowImageRect("Display Image")[2]
+            new_height = int(current_width / aspect_ratio)
+            cv2.resizeWindow("Display Image", current_width, new_height)
+cv2.destroyAllWindows()
 
 
 """
