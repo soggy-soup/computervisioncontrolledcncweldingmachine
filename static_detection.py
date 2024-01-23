@@ -57,7 +57,7 @@ class process_img:
         self.img_in_processing = cv2.drawContours(self.img_read[175:3300, 535:3950], self.contours, -1, (0, 0, 255), 10)
 
 #https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
-test = process_img("images\\bothpieces.jpg")
+test = process_img("images\\leftpiece.jpg")
 
 test.img_crop()
 test.img_gaussian_blur()
@@ -67,7 +67,7 @@ test.img_draw_contours()
 test.img_show(test.img_in_processing)
 print(test.heirarchy)
 
-
+'''
 test2 = process_img("images\\leftpiece.jpg")
 test2.img_crop()
 test2.img_bilateral_blur()
@@ -90,7 +90,7 @@ while True:
             new_height = int(current_width / aspect_ratio)
             cv2.resizeWindow("Display Image", current_width, new_height)
 cv2.destroyAllWindows()
-
+'''
 
 """
     def img_show(self):
