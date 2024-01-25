@@ -1,16 +1,6 @@
 import cv2
 
-class process_img:
-    def __init__(self, img_path):
-        self.img_read = cv2.imread(img_path)
-        self.img_in_processing = self.img_read
-        self.contours = []
-        self.heirarchy = []
-        self.gray = []
-        self.saturate = []
-        self.thresh = []
-
-    def img_show(self, img_to_show):
+def img_show(img_to_show):
         aspect_ratio = img_to_show.shape[1] / img_to_show.shape[0]
         cv2.namedWindow("Display Image", cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_NORMAL)
         cv2.imshow("Display Image", img_to_show)
@@ -24,6 +14,16 @@ class process_img:
             new_height = int(current_width / aspect_ratio)
             cv2.resizeWindow("Display Image", current_width, new_height)
         cv2.destroyAllWindows()
+
+class process_img:
+    def __init__(self, img_path):
+        self.img_read = cv2.imread(img_path)
+        self.img_in_processing = self.img_read
+        self.contours = []
+        self.heirarchy = []
+        self.gray = []
+        self.saturate = []
+        self.thresh = []
 
     def img_crop(self):
         self.img_in_processing = self.img_in_processing[175:3300, 535:3950]
@@ -60,51 +60,10 @@ class process_img:
 test = process_img("images\\leftpiece.jpg")
 
 test.img_crop()
-test.img_gaussian_blur()
+test.img_bilateral_blur()
 test.img_detect_HSV_contours()
-test.img_show(test.thresh)
+#img_show(test.thresh)
 test.img_draw_contours()
-test.img_show(test.img_in_processing)
+img_show(test.img_in_processing)
+
 print(test.heirarchy)
-
-'''
-test2 = process_img("images\\leftpiece.jpg")
-test2.img_crop()
-test2.img_bilateral_blur()
-test2.img_detect_HSV_contours()
-test2.img_draw_contours()
-test2.img_show(test2.img_in_processing)
-
-combinedimage = cv2.addWeighted(test2.img_in_processing, .5, test.img_in_processing, 0.5, 0)
-
-aspect_ratio = combinedimage.shape[1] / combinedimage.shape[0]
-cv2.namedWindow("Display Image", cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_NORMAL)
-cv2.imshow("Display Image", combinedimage)
-
-while True:
-            key = cv2.waitKey(1)
-            if key == 27:
-                break
-
-            current_width = cv2.getWindowImageRect("Display Image")[2]
-            new_height = int(current_width / aspect_ratio)
-            cv2.resizeWindow("Display Image", current_width, new_height)
-cv2.destroyAllWindows()
-'''
-
-"""
-    def img_show(self):
-        aspect_ratio = self.img_in_processing.shape[1] / self.img_in_processing.shape[0]
-        cv2.namedWindow("Display Image", cv2.WINDOW_NORMAL | cv2.WINDOW_GUI_NORMAL)
-        cv2.imshow("Display Image", self.img_in_processing)
-
-        while True:
-            key = cv2.waitKey(1)
-            if key == 27: 
-                break
-
-            current_width = cv2.getWindowImageRect("Display Image")[2]
-            new_height = int(current_width / aspect_ratio)
-            cv2.resizeWindow("Display Image", current_width, new_height)
-        cv2.destroyAllWindows()
-"""
