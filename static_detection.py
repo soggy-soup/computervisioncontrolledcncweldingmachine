@@ -76,8 +76,9 @@ class process_img:
         self.img_in_processing = cv2.drawContours(self.img_undistorted[self.crop_height, self.crop_width], self.contours, -1, (0, 0, 255), 10)
 
 
-test = process_img("images\\leftpiece.jpg")
-test.img_crop(175,3300,535,3800)
+test = process_img("images\\newlightingtest.jpg")
+#test.img_crop(175,3300,535,3800)
+test.img_crop(0,4000,0,4000)
 
 test.img_bilateral_blur()
 test.img_detect_HSV_contours()
