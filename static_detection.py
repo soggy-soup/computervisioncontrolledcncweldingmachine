@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
-
-#https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
-#camera calibration mtx/dist matricies
+# https://www.youtube.com/watch?v=FczN93nT-dQ
+# https://www.youtube.com/watch?v=aFNDh5k3SjU
+# https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
+# camera calibration mtx/dist matricies
 mtx = np.loadtxt('calibration\\mtx.txt')
 dist = np.loadtxt('calibration\\dist.txt')
 
