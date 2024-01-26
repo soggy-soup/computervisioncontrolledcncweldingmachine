@@ -1,4 +1,10 @@
 import cv2
+import numpy as np
+
+#https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
+#camera calibration mtx/dist matricies
+mtx = np.loadtxt('calibration\\mtx.txt')
+dist = np.loadtxt('calibration\\dist.txt')
 
 def img_show(img_to_show):
         aspect_ratio = img_to_show.shape[1] / img_to_show.shape[0]
@@ -18,15 +24,28 @@ def img_show(img_to_show):
 class process_img:
     def __init__(self, img_path):
         self.img_read = cv2.imread(img_path)
-        self.img_in_processing = self.img_read
+        
+        #undistorting/remapping
+        h,  w = self.img_read.shape[:2]
+        newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
+        mapx, mapy = cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
+        self.img_undistorted = cv2.remap(self.img_read, mapx, mapy, cv2.INTER_LINEAR)
+        
+        # crop the image
+        x, y, w, h = roi
+        self.img_undistorted = self.img_undistorted[y:y+h, x:x+w]
+        
+        self.img_in_processing = self.img_undistorted
         self.contours = []
         self.heirarchy = []
         self.gray = []
         self.saturate = []
         self.thresh = []
 
-    def img_crop(self):
-        self.img_in_processing = self.img_in_processing[175:3300, 535:3950]
+    def img_crop(self, h_start,h_end, w_start,w_end):
+        self.crop_height = slice(h_start,h_end)
+        self.crop_width = slice(w_start,w_end)
+        self.img_in_processing = self.img_in_processing[self.crop_height, self.crop_width]
 
     def img_gaussian_blur(self):
         self.img_in_processing = cv2.GaussianBlur(self.img_in_processing, (21, 21), 0)
@@ -53,17 +72,17 @@ class process_img:
         self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         
-    def img_draw_contours(self,):
-        self.img_in_processing = cv2.drawContours(self.img_read[175:3300, 535:3950], self.contours, -1, (0, 0, 255), 10)
+    def img_draw_contours(self):
+        self.img_in_processing = cv2.drawContours(self.img_undistorted[self.crop_height, self.crop_width], self.contours, -1, (0, 0, 255), 10)
 
-#https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
+
 test = process_img("images\\leftpiece.jpg")
+test.img_crop(175,3300,535,3800)
 
-test.img_crop()
 test.img_bilateral_blur()
 test.img_detect_HSV_contours()
-#img_show(test.thresh)
 test.img_draw_contours()
+
 img_show(test.img_in_processing)
 
 print(test.heirarchy)
