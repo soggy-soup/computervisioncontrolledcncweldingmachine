@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 # https://www.youtube.com/watch?v=FczN93nT-dQ
+# https://docs.adaptive-vision.com/4.12/studio/machine_vision_guide/CameraCalibrationAndWorldCoordinates.html
+# https://www.fdxlabs.com/calculate-x-y-z-real-world-coordinates-from-a-single-camera-using-opencv/
 # https://www.youtube.com/watch?v=aFNDh5k3SjU
 # https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
 # camera calibration mtx/dist matricies
