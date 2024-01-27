@@ -1,13 +1,17 @@
 import cv2
 import numpy as np
+
+# https://stackoverflow.com/questions/55220229/extrinsic-matrix-computation-with-opencv/55284535#55284535
 # https://www.youtube.com/watch?v=FczN93nT-dQ
 # https://docs.adaptive-vision.com/4.12/studio/machine_vision_guide/CameraCalibrationAndWorldCoordinates.html
 # https://www.fdxlabs.com/calculate-x-y-z-real-world-coordinates-from-a-single-camera-using-opencv/
 # https://www.youtube.com/watch?v=aFNDh5k3SjU
 # https://docs.opencv.org/4.9.0/d2/de8/group__core__array.html#ga303cfb72acf8cbb36d884650c09a3a97
 # camera calibration mtx/dist matricies
+'''
 mtx = np.loadtxt('calibration\\mtx.txt')
 dist = np.loadtxt('calibration\\dist.txt')
+'''
 
 def img_show(img_to_show):
         aspect_ratio = img_to_show.shape[1] / img_to_show.shape[0]
@@ -27,18 +31,17 @@ def img_show(img_to_show):
 class process_img:
     def __init__(self, img_path):
         self.img_read = cv2.imread(img_path)
-        
+        '''
         #undistorting/remapping
         h,  w = self.img_read.shape[:2]
         newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
         mapx, mapy = cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
         self.img_undistorted = cv2.remap(self.img_read, mapx, mapy, cv2.INTER_LINEAR)
-        
         # crop the image
         x, y, w, h = roi
         self.img_undistorted = self.img_undistorted[y:y+h, x:x+w]
-        
-        self.img_in_processing = self.img_undistorted
+        '''
+        self.img_in_processing = self.img_read
         self.contours = []
         self.heirarchy = []
         self.gray = []

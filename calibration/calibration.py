@@ -40,7 +40,7 @@ for fname in images:
         imgpoints.append(corners2)
         # Draw and display the corners
         cv.drawChessboardCorners(img, (9,6), corners2, ret)
-       # img_show(img)
+        #img_show(img)
         
 ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
@@ -49,17 +49,23 @@ np.savetxt('calibration\\dist.txt', dist)
 
 
 
-'''
-img = cv.imread('images\\calibration\\WIN_20240123_16_16_28_Pro.jpg')
+
+img = cv.imread('calibration\\calibrationimages\\both piece.jpg')
 h,  w = img.shape[:2]
 newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
 
 # undistort
 mapx, mapy = cv.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
 dst = cv.remap(img, mapx, mapy, cv.INTER_LINEAR)
+#dst = cv.undistort(img, mtx, dist, None, newcameramtx)
 # crop the image
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
-cv.imwrite('calibresult.png', dst)
+cv.imwrite('3calibresult.png', dst)
 
-'''
+mean_error = 0
+for i in range(len(objpoints)):
+    imgpoints2, _ = cv.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+    error = cv.norm(imgpoints[i], imgpoints2, cv.NORM_L2)/len(imgpoints2)
+    mean_error += error
+print( "total error: {}".format(mean_error/len(objpoints)) )
