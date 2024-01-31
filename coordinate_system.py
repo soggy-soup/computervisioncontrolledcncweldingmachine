@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-#delete late
+#delete later
 camera_matrix = np.load('calibration\\14%_camera_matrix.npy')
 dist_coeffs = np.load('calibration\\14%_dist_coeffs.npy')
 
@@ -13,5 +13,5 @@ def find_origin(img, camera_matrix,dist_coeffs):
     marker_corners, marker_ids, _ = cv2.aruco.detectMarkers(undistorted_image, aruco_dict, parameters= params)
     cv2.aruco.drawDetectedMarkers(undistorted_image,marker_corners, marker_ids, None)
 
-#delete late
+#delete later
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
