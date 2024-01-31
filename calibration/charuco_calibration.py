@@ -92,7 +92,7 @@ def detect_pose(image, camera_matrix, dist_coeffs):
 
     # Detect markers in the undistorted image
     marker_corners, marker_ids, _ = cv2.aruco.detectMarkers(undistorted_image, dictionary, parameters=params)
-
+    
     # If at least one marker is detected
     if len(marker_ids) > 0:
         # Interpolate CharUco corners
@@ -112,7 +112,6 @@ def main():
     camera_matrix = np.load('calibration\\14%_camera_matrix.npy')
     dist_coeffs = np.load('calibration\\14%_dist_coeffs.npy')
     
-
     # Iterate through PNG images in the folder
     image_files = glob.glob("calibration\\charuco_images\\*.jpg")
     

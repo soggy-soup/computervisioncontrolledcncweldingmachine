@@ -42,6 +42,23 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 '''
 # open video0
 cap = cv2.VideoCapture(0, cv2.CAP_MSMF)
