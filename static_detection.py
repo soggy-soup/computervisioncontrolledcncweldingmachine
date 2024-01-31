@@ -68,7 +68,7 @@ displayimg.img_show(test2.img_in_processing)
 
 print(test.heirarchy)
 print(test.contours)
-np.save('testcontours.npy',test.contours)
+#np.save('testcontours.npy',test.contours)
 
 print(test2.heirarchy)
 print(test2.contours)
