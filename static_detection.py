@@ -48,7 +48,7 @@ class process_img:
         self.contours, self.heirarchy = cv2.findContours(self.thresh[self.crop_height, self.crop_width], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE, offset=(self.w_start, self.h_start))
         
     def img_draw_contours(self):
-        self.img_in_processing = cv2.drawContours(self.img_read, self.contours, -1, (0, 0, 255), 20)
+        self.img_in_processing = cv2.drawContours(self.img_read, self.contours, -1, (0, 0, 255), thickness = cv2.FILLED)
 
 
 test = process_img("images\\both.jpg")
@@ -68,8 +68,8 @@ displayimg.img_show(test2.img_in_processing)
 
 print(test.heirarchy)
 print(test.contours)
-#np.save('testcontours.npy',test.contours)
+np.save('test1contours.npy',test.contours)
 
 print(test2.heirarchy)
 print(test2.contours)
-#np.save('test2contours.npy',test2.contours)
+np.save('test2contours.npy',test2.contours)
