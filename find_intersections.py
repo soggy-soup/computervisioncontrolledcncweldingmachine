@@ -24,6 +24,9 @@ def radius_intersect(cont1, cont2, radius = None):
     cont2 = np.delete(cont2, idx_delete[1], 0)
     cont1 = cont1[None,:,None]
     cont2 = cont2[None,:,None]
+    testimg = cv2.imread("images\\both.jpg")
+    newjoint = cv2.drawContours(testimg, cont2, -1, (0, 0, 255), thickness = 3)
+    displayimg.img_show(newjoint)
     
     
     
@@ -38,7 +41,7 @@ def radius_intersect(cont1, cont2, radius = None):
 #test1 = np.load('test1contours.npy')
 #test2 = np.load('test2contours.npy')
 
-test1 = np.array([[1,1], [1,2],[1,3]]) 
-test2 = np.array([[1,2], [1,5],[1,6],[1,7]])
+test1 = np.array([[100,100], [100,300],[100,600]]) 
+test2 = np.array([[100,105], [200,300],[200,600],[200,800]])
 
-radius_intersect(test1,test2,radius = 1)
+radius_intersect(test1,test2,radius = 4)
