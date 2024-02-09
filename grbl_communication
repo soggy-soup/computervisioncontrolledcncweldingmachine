@@ -1,0 +1,16 @@
+import serial
+import time
+
+s = serial.Serial('/dev/tty.usbmodem1811',115200)
+
+file = open("gcode.gcode", 'r')
+
+s.write("\r\n\r\n")
+time.sleep(3)
+s.flushInput()
+
+#for line in file:
+    
+
+
+
