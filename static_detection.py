@@ -51,14 +51,16 @@ class process_img:
         self.img_in_processing = cv2.drawContours(self.img_read, self.contours, -1, (0, 0, 255), thickness = 3)
 
 
-test = process_img("images\\both.jpg")
-test.img_crop(200,3300,535,3800)
+test = process_img("images\\both_w_tag.jpg")
+#test.img_crop(200,3300,535,3800)
+test.img_crop(500,2500,500,3800)
 test.img_bilateral_blur()
 test.img_detect_HSV_contours()
 test.img_draw_contours()
 
-test2 = process_img("images\\left.jpg")
-test2.img_crop(200,3300,535,3800)
+test2 = process_img("images\\left_w_tag.jpg")
+#test2.img_crop(200,3300,535,3800)
+test2.img_crop(500,2500,500,3800)
 test2.img_bilateral_blur()
 test2.img_detect_HSV_contours()
 test2.img_draw_contours()
@@ -68,9 +70,9 @@ displayimg.img_show(test2.img_in_processing)
 
 #print(test.heirarchy)
 #print(test.contours)
-#np.save('test1contours.npy',test.contours)
+np.save('contours1.npy',test.contours)
 
 #print(test2.heirarchy)
 #print(test2.contours)
-print('img array',test2.img_read)
-#np.save('test2contours.npy',test2.contours)
+#print('img array',test2.img_read)
+np.save('contours2.npy',test2.contours)
