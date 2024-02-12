@@ -61,8 +61,8 @@ def calibrate_and_save_parameters():
     retval, camera_matrix, dist_coeffs, rvecs, tvecs = cv2.aruco.calibrateCameraCharuco(all_charuco_corners, all_charuco_ids, board, image.shape[:2], None, None)
 
     # Save calibration data
-    np.save('calibration\\14%_camera_matrix.txt', camera_matrix)
-    np.save('calibration\\14%_dist_coeffs.txt', dist_coeffs)
+    np.save('calibration\\14%_camera_matrix.npy', camera_matrix)
+    np.save('calibration\\14%_dist_coeffs.npy', dist_coeffs)
 
     # Iterate through displaying all the images
     '''
@@ -129,6 +129,6 @@ def main():
 
 #create_and_save_new_board()
 
-#calibrate_and_save_parameters()
+calibrate_and_save_parameters()
 
-main()
+#main()
