@@ -14,3 +14,9 @@ def img_show(img_to_show):
             new_height = int(current_width / aspect_ratio)
             cv2.resizeWindow("Display Image", current_width, new_height)
         cv2.destroyAllWindows()
+
+def draw_contour(img,contour):
+    img = cv2.imread(img)
+    img = cv2.drawContours(img, contour, -1, (0, 0, 255), thickness = 3)
+    return img
+    

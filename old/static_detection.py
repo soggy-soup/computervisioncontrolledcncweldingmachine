@@ -70,9 +70,9 @@ displayimg.img_show(test2.img_in_processing)
 
 #print(test.heirarchy)
 #print(test.contours)
-np.save('contours1.npy',test.contours)
+#np.save('contours1.npy',test.contours)
 
 #print(test2.heirarchy)
 #print(test2.contours)
 #print('img array',test2.img_read)
-np.save('contours2.npy',test2.contours)
+#np.save('contours2.npy',test2.contours)

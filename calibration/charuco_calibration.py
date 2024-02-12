@@ -131,4 +131,4 @@ def main():
 
 calibrate_and_save_parameters()
 
-#main()
+main()

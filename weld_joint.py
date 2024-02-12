@@ -45,6 +45,7 @@ class process_img:
         self.thresh = cv2.inRange(self.saturate, (0,100,0), (50,255,200))
         self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh[self.crop_height, self.crop_width], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE, offset=(self.w_start, self.h_start))
+        self.contours = np.array(self.contours)
         
     def img_draw_contours(self):
         self.img_in_processing = cv2.drawContours(self.img_read, self.contours, -1, (0, 0, 255), thickness = 3)
@@ -74,7 +75,7 @@ def radius_intersect(cont1, cont2, radius = None):
     cont2 = cont2[None,:,None]
     
     #contour containing "weld joint"
-    intersection_contour = cont2
+    intersection_contour = cont1
 
     return intersection_contour
 
@@ -87,7 +88,7 @@ def find_aruco_corners(img,camera_matrix,dist_coeffs):
 
     return marker_corners
     
-def transform_points(corners, path):
+def transform_points(path, corners):
     x1,y1 = corners[0][0][1]
     x2,y2 = corners[0][0][2]
     theta = np.arctan((y1-y2)/(x1-x2)) 
