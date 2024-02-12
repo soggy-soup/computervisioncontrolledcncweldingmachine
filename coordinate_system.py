@@ -16,13 +16,12 @@ def find_aruco_corners(img, camera_matrix,dist_coeffs):
     return marker_corners
     
 def transform_points(corners, path):
-    x,y = path[0][0][0]
+    print(path[0][0][0][0])
+    x,y = path[0][200][0]
     x1,y1 = [10,10] #corners[0][0][0]
     x2,y2 = [10.001,5]  #corners[0][0][1]
     theta = np.arctan((y1-y2)/(x1-x2)) #*(180/np.pi)
     print(theta)
-    
-    
     x_transformed = ((x-x2)*np.cos(theta)) + ((y2-y)*np.sin(theta))
     y_transformed = (-(x-x2)*np.cos(theta)) + ((y2-y)*np.sin(theta))
     
