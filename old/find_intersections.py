@@ -9,16 +9,13 @@ def radius_intersect(cont1, cont2, radius = None):
     print("CONT1",cont1[0][0][0])
     cont1 = cont1.squeeze()
     cont2 = cont2.squeeze()
-    
-    
+        
     deltas = cont1[:,None,:] - cont2[None,:,:]
     distances = np.sum(np.square(deltas), axis = -1)
-   
-    
+       
     overlap = np.flatnonzero(distances <= rad_squared)
     idx_delete = np.unravel_index(overlap,distances.shape)
-    
-    
+        
     cont1 = np.delete(cont1, idx_delete[0], 0)
     cont2 = np.delete(cont2, idx_delete[1], 0)
     cont1 = cont1[None,:,None]
@@ -29,14 +26,6 @@ def radius_intersect(cont1, cont2, radius = None):
     np.save('INTERSECTION.npy',cont2)
     
     
-    
-    
-    
-    
-    
-    
-
-
 
 test1 = np.load('contours1.npy')
 test2 = np.load('contours2.npy')
