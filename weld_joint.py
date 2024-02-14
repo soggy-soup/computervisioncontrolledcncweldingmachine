@@ -90,16 +90,23 @@ def find_aruco_corners(img,camera_matrix,dist_coeffs):
     
 def transform_points(path, corners):
     x1,y1 = corners[0][0][1]
-    x2,y2 = corners[0][0][2]
-    theta = np.arctan((y1-y2)/(x1-x2)) 
+    x2,y2 = corners[0][0][0]
+    theta = -np.arctan((y1-y2)/(x1-x2)) 
 
     path[:,:,:,0] = ((path[:,:,:,0]-x2)*np.cos(theta))+((y2-path[:,:,:,1])*np.sin(theta))   
-    path[:,:,:,1] = (-(path[:,:,:,0]-x2)*np.cos(theta))+((y2-path[:,:,:,1])*np.sin(theta))   
+    path[:,:,:,1] = (-(path[:,:,:,0]-x2)*np.sin(theta))+((y2-path[:,:,:,1])*np.cos(theta))   
     transformed_path = path
     
     return transformed_path
 
+def mm_to_px_ratio(corners, aruco_size_mm=None):
 
+    for i in range(len(corners[0][0])):
+        avg_dist = np.sqrt(np.square(corners[0][0][i-1][0]-corners[0][0][i][0]) + np.square(corners[0][0][i-1][1]-corners[0][0][i][1]))
+        print(avg_dist)
+        ratio = aruco_size_mm/avg_dist
+        return ratio
+    
 
 
 

@@ -1,7 +1,7 @@
 #import cv2
 import numpy as np
 import weld_joint
-#import grbl_gcode
+import grbl_gcode
 import util_funcs.displayimg
 
 img1 = "images\\left_w_tag.jpg"
@@ -17,7 +17,7 @@ corners1 = weld_joint.find_aruco_corners(img1,mtx,dst)
 #maybe use for weighted average
 #corners2 = weld_joint.find_aruco_corners(img2,mtx,dst)
 
-
+ratio = weld_joint.mm_to_px_ratio(corners1, aruco_size_mm=50)
 
 #find 1st contour
 path1 = weld_joint.process_img(img1)
@@ -37,11 +37,12 @@ path2.img_draw_contours()
 
 
 intersection = weld_joint.radius_intersect(path1.contours,path2.contours, radius = 5)
-img_w_contour = util_funcs.displayimg.draw_contour(img2,intersection)
-util_funcs.displayimg.img_show(img_w_contour)
+
 
 path_wrt_aruco = weld_joint.transform_points(intersection,corners1)
 
+
+grbl_gcode.generate_path_gcode(path_wrt_aruco,ratio, 100,None)
 
 
 
