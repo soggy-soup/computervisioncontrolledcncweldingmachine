@@ -28,7 +28,7 @@ class process_img:
         self.img_in_processing = cv2.medianBlur(self.img_in_processing, 5)
 
     def img_bilateral_blur(self):
-        self.img_in_processing = cv2.bilateralFilter(self.img_in_processing, 11, 175, 175)
+        self.img_in_processing = cv2.bilateralFilter(self.img_in_processing, 15, 175, 175)
 
     def img_basic_blur(self):
         self.img_in_processing = cv2.blur(self.img_in_processing, (100, 100))
@@ -45,6 +45,7 @@ class process_img:
         self.thresh = cv2.inRange(self.saturate, (0,100,0), (50,255,200))
         self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh[self.crop_height, self.crop_width], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE, offset=(self.w_start, self.h_start))
+        print(self.heirarchy)
         self.contours = np.array(self.contours)
         
     def img_draw_contours(self):
@@ -82,16 +83,17 @@ def radius_intersect(cont1, cont2, radius = None):
 def find_aruco_corners(img,camera_matrix,dist_coeffs):
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
     img = cv2.imread(img)
-    undistorted_image = cv2.undistort(img, camera_matrix, dist_coeffs)
+    #undistorted_image = cv2.undistort(img, camera_matrix, dist_coeffs)
     params = cv2.aruco.DetectorParameters()
-    marker_corners, marker_ids, _ = cv2.aruco.detectMarkers(undistorted_image, aruco_dict, parameters= params)
+    marker_corners, marker_ids, _ = cv2.aruco.detectMarkers(img, aruco_dict, parameters= params)
 
     return marker_corners
     
 def transform_points(path, corners):
-    x1,y1 = corners[0][0][1]
-    x2,y2 = corners[0][0][0]
-    theta = -np.arctan((y1-y2)/(x1-x2)) 
+    print(corners)
+    x1,y1 = corners[0][0][0]
+    x2,y2 = corners[0][0][1]
+    theta = np.arctan((y1-y2)/(x1-x2)) 
 
     path[:,:,:,0] = ((path[:,:,:,0]-x2)*np.cos(theta))+((y2-path[:,:,:,1])*np.sin(theta))   
     path[:,:,:,1] = (-(path[:,:,:,0]-x2)*np.sin(theta))+((y2-path[:,:,:,1])*np.cos(theta))   
@@ -103,7 +105,6 @@ def mm_to_px_ratio(corners, aruco_size_mm=None):
 
     for i in range(len(corners[0][0])):
         avg_dist = np.sqrt(np.square(corners[0][0][i-1][0]-corners[0][0][i][0]) + np.square(corners[0][0][i-1][1]-corners[0][0][i][1]))
-        print(avg_dist)
         ratio = aruco_size_mm/avg_dist
         return ratio
     

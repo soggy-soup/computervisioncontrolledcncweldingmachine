@@ -4,16 +4,19 @@ import weld_joint
 import grbl_gcode
 import util_funcs.displayimg
 
-img1 = "images\\left_w_tag.jpg"
-img2 = "images\\both_w_tag.jpg"
+img1 = "images\\test2both.jpg"
+img2 = "images\\test2.jpg"
 
 #camera distortion coefficients
-mtx = np.load("calibration\\14%_camera_matrix.npy")
-dst = np.load("calibration\\14%_dist_coeffs.npy")
-
-
+#mtx = np.load("calibration\\14%_camera_matrix.npy")
+#dst = np.load("calibration\\14%_dist_coeffs.npy")
+mtx = np.array([[1,0,1],[0,1,1],[0,0,1]])
+dst = np.array([[1,1,1,1,1]])
+print(mtx)
+print(dst)
 #find aruco tag origin
 corners1 = weld_joint.find_aruco_corners(img1,mtx,dst)
+print(corners1)
 #maybe use for weighted average
 #corners2 = weld_joint.find_aruco_corners(img2,mtx,dst)
 
@@ -36,13 +39,13 @@ path2.img_draw_contours()
 #util_funcs.displayimg.img_show(path2.img_in_processing)
 
 
-intersection = weld_joint.radius_intersect(path1.contours,path2.contours, radius = 5)
+intersection = weld_joint.radius_intersect(path1.contours,path2.contours, radius = 7)
 
 
 path_wrt_aruco = weld_joint.transform_points(intersection,corners1)
+print(ratio)
 
-
-grbl_gcode.generate_path_gcode(path_wrt_aruco,ratio, 100,None)
+grbl_gcode.generate_path_gcode(path_wrt_aruco,.124, 400,None)
 
 
 
