@@ -11,6 +11,7 @@ class process_img:
         self.gray = []
         self.saturate = []
         self.thresh = []
+        self.contour_area = []
 
     def img_crop(self, h_start,h_end, w_start,w_end):
         self.h_start = h_start
@@ -42,15 +43,27 @@ class process_img:
     
     def img_detect_HSV_contours(self):
         self.saturate = cv2.cvtColor(self.img_in_processing, cv2.COLOR_RGB2HSV)
-        self.thresh = cv2.inRange(self.saturate, (0,100,0), (50,255,200))
+       # self.thresh = cv2.inRange(self.saturate, (0,100,0), (50,255,200))
+        self.thresh = cv2.inRange(self.saturate, (0,50,0), (50,255,200))
         self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh[self.crop_height, self.crop_width], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE, offset=(self.w_start, self.h_start))
         print(self.heirarchy)
-        self.contours = np.array(self.contours)
+        #self.contours = np.array(self.contours)
         
     def img_draw_contours(self):
         self.img_in_processing = cv2.drawContours(self.img_read, self.contours, -1, (0, 0, 255), thickness = 3)
-
+        
+    def largest_contour(self):
+        for i in range(len(self.heirarchy[0])):
+           areaN = cv2.contourArea(self.contours[i])
+           self.contour_area.append(areaN)
+        self.contour_area =np.array(self.contour_area)
+        max_area_idx = np.argmax(self.contour_area)
+        self.contours = self.contours[max_area_idx]
+        print(np.shape(self.contours))
+        
+        
+        
 def radius_intersect(cont1, cont2, radius = None):
     #radial tolerance for what is considered an "intersection", squared to reduce calcs below
     rad_squared = radius ** 2
@@ -102,11 +115,11 @@ def transform_points(path, corners):
     return transformed_path
 
 def mm_to_px_ratio(corners, aruco_size_mm=None):
-
+    avg_dist = 0
     for i in range(len(corners[0][0])):
-        avg_dist = np.sqrt(np.square(corners[0][0][i-1][0]-corners[0][0][i][0]) + np.square(corners[0][0][i-1][1]-corners[0][0][i][1]))
-        ratio = aruco_size_mm/avg_dist
-        return ratio
+        avg_dist += np.sqrt(np.square(corners[0][0][i-1][0]-corners[0][0][i][0]) + np.square(corners[0][0][i-1][1]-corners[0][0][i][1]))
+    ratio = (aruco_size_mm*4)/avg_dist
+    return ratio
     
 
 
