@@ -43,8 +43,8 @@ class process_img:
     
     def img_detect_HSV_contours(self):
         self.saturate = cv2.cvtColor(self.img_in_processing, cv2.COLOR_RGB2HSV)
-       # self.thresh = cv2.inRange(self.saturate, (0,100,0), (50,255,200))
         self.thresh = cv2.inRange(self.saturate, (0,50,0), (50,255,200))
+        #self.thresh = cv2.inRange(self.saturate, (0,50,0), (50,255,200))
         self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh[self.crop_height, self.crop_width], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE, offset=(self.w_start, self.h_start))
         print(self.heirarchy)
