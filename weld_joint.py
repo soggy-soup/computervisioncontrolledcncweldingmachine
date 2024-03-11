@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 class process_img:
-    def __init__(self, img_path):
+    def __init__(self, img_path=None):
         self.img_read = cv2.imread(img_path)
         
         self.img_in_processing = self.img_read
@@ -60,7 +60,7 @@ class process_img:
         self.contour_area =np.array(self.contour_area)
         max_area_idx = np.argmax(self.contour_area)
         self.contours = self.contours[max_area_idx]
-        print(np.shape(self.contours))
+        
         
         
         
