@@ -34,12 +34,13 @@ class App(customtkinter.CTk):
         self.contours1 = None
         self.contours2 = None
         self.joint_intersection = None
+        self.path_wrt_aruco = None
+        self.corners = None
         
         #switch states to ensure first picture is taken before second
-        self.img12pressed = True
         self.img1_state = NORMAL
         self.img2_state = DISABLED
-        
+        self.intersection_state = DISABLED
         
         #create video stream label
         self.video_stream = customtkinter.CTkLabel(self,text="")
@@ -57,9 +58,9 @@ class App(customtkinter.CTk):
 
         #image processing buttons
         customtkinter.CTkLabel(self, text="Joint Detection:").grid(row=2,column=1)
-        self.img1 = customtkinter.CTkButton(self,text="Picture 1",fg_color="red",state=self.img1_state, command=self.process_img).grid(row=3,column=1)
-        self.img2 = customtkinter.CTkButton(self,text="Picture 2",fg_color="blue",state=self.img2_state,command=self.process_img).grid(row=3,column=2)
-        joint_location = customtkinter.CTkButton(self,text="Weld Joint",command = self.joint).grid(row=3,column=3)
+        self.img1 = customtkinter.CTkButton(self,text="Picture 1",fg_color="red",state=self.img1_state, command=self.process_img1).grid(row=3,column=1)
+        self.img2 = customtkinter.CTkButton(self,text="Picture 2",fg_color="blue",state=self.img2_state,command=self.process_img2).grid(row=3,column=2)
+        self.joint_location = customtkinter.CTkButton(self,text="Weld Joint",state=self.intersection_state,command = self.joint).grid(row=3,column=3)
 
         #material/welder setup buttons
         customtkinter.CTkLabel(self, text="Material Setup:").grid(row=5,column=1)
@@ -70,7 +71,7 @@ class App(customtkinter.CTk):
 
         #gcode/machine control buttons
         customtkinter.CTkLabel(self, text="GCODE:").grid(row=7,column=1)
-        customtkinter.CTkButton(self,text="Generate G-Code").grid(row=8,column=1)
+        customtkinter.CTkButton(self,text="Generate G-Code", command=None).grid(row=8,column=1)
         customtkinter.CTkButton(self,text="Execute").grid(row=8,column=2)
         
         
@@ -93,8 +94,8 @@ class App(customtkinter.CTk):
         self.video_stream.photo_img = photo_img
         self.video_stream.configure(image =photo_img)
         self.video_stream.after(10,self.open_camera)
-    
-    def process_img(self):
+
+    def process_img1(self):
         path = weld_joint.process_img()
         path.img_in_processing = self.frame
         path.img_crop(100,3496,500,3496)
@@ -102,29 +103,49 @@ class App(customtkinter.CTk):
         path.img_detect_HSV_contours() 
         path.largest_contour()
         
-
-        if (self.img12pressed==True):
-            self.img12pressed = False
-            self.img1_state = DISABLED
-            self.img2_state = NORMAL
-            self.contours2 = None
-            self.joint_intersection = None
-            self.contours1 = path.contours
-        else:
-            self.img12pressed = True
-            self.img1_state = NORMAL
-            self.img2_state = DISABLED
-            self.contours2 = path.contours
-
-        self.grid_slaves(row=3, column=1)[0].configure(state=self.img1_state)
+        #empty distortion matrix because camera has negligeble distortion
+        mtx = np.array([[1,0,1],[0,1,1],[0,0,1]])
+        dst = np.array([[1,1,1,1,1]])
+        
+        self.corners = weld_joint.find_aruco_corners(self.frame,mtx,dst)
+        self.contours2 = None
+        self.joint_intersection = None
+        self.contours1 = path.contours
+        
+        self.img2_state = NORMAL
         self.grid_slaves(row=3, column=2)[0].configure(state=self.img2_state)
+        self.intersection_state = DISABLED
+        self.grid_slaves(row=3, column=3)[0].configure(state=self.intersection_state)
+        
+    def process_img2(self):
+        path = weld_joint.process_img()
+        path.img_in_processing = self.frame
+        path.img_crop(100,3496,500,3496)
+        path.img_bilateral_blur()
+        path.img_detect_HSV_contours() 
+        path.largest_contour()
+        
+        self.joint_intersection = None
+        self.contours2 = path.contours
+        
+        self.img2_state = DISABLED
+        self.intersection_state = NORMAL
+        self.grid_slaves(row=3, column=2)[0].configure(state=self.img2_state)
+        self.grid_slaves(row=3, column=3)[0].configure(state=self.intersection_state)
     
     def joint(self):
-        if ((self.contours1 is not None) & (self.contours2 is not None)):
+        if ((self.contours1 is not None) & (self.contours2 is not None) & (self.corners is not None)):
             self.joint_intersection = weld_joint.radius_intersect(self.contours1,self.contours2,radius=3)
+            #self.path_wrt_aruco = weld_joint.transform_points(self.joint_intersection, self.corners)
+            self.intersection_state = DISABLED
+            self.grid_slaves(row=3, column=3)[0].configure(state=self.intersection_state)
             self.contours1 = None
             self.contours2 = None
             
+            
+    def gcode(self):
+        if (self.path_wrt_aruco is not None):
+            grbl_gcode.generate_path_gcode(self.path_wrt_aruco,0.1205, 300)
          
         
 

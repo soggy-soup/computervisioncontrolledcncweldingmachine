@@ -51,7 +51,7 @@ util_funcs.displayimg.img_show(overlap)
 path_wrt_aruco = weld_joint.transform_points(intersection,corners1)
 
 
-grbl_gcode.generate_path_gcode(path_wrt_aruco,.1205, 1600,None)
+grbl_gcode.generate_path_gcode(path_wrt_aruco,.1205, 300)
 
 
 

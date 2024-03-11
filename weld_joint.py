@@ -47,7 +47,7 @@ class process_img:
         #self.thresh = cv2.inRange(self.saturate, (0,50,0), (50,255,200))
         self.thresh = cv2.morphologyEx(self.thresh, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))
         self.contours, self.heirarchy = cv2.findContours(self.thresh[self.crop_height, self.crop_width], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE, offset=(self.w_start, self.h_start))
-        print(self.heirarchy)
+        #print(self.heirarchy)
         #self.contours = np.array(self.contours)
         
     def img_draw_contours(self):
@@ -61,9 +61,7 @@ class process_img:
         max_area_idx = np.argmax(self.contour_area)
         self.contours = self.contours[max_area_idx]
         
-        
-        
-        
+            
 def radius_intersect(cont1, cont2, radius = None):
     #radial tolerance for what is considered an "intersection", squared to reduce calcs below
     rad_squared = radius ** 2
@@ -95,15 +93,14 @@ def radius_intersect(cont1, cont2, radius = None):
 
 def find_aruco_corners(img,camera_matrix,dist_coeffs):
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
-    img = cv2.imread(img)
-    #undistorted_image = cv2.undistort(img, camera_matrix, dist_coeffs)
+    #img = cv2.imread(img) CHANGE IF USING GUI VS MAIN.PY
+    #undistorted_image = cv2.undistort(img, camera_matrix, dist_coeffs) Undistort image if using distortion
     params = cv2.aruco.DetectorParameters()
     marker_corners, marker_ids, _ = cv2.aruco.detectMarkers(img, aruco_dict, parameters= params)
 
     return marker_corners
     
 def transform_points(path, corners):
-    print(corners)
     x1,y1 = corners[0][0][0]
     x2,y2 = corners[0][0][1]
     theta = np.arctan((y1-y2)/(x1-x2)) 
@@ -121,7 +118,6 @@ def mm_to_px_ratio(corners, aruco_size_mm=None):
     ratio = (aruco_size_mm*4)/avg_dist
     return ratio
     
-
 
 
 
