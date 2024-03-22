@@ -1,11 +1,15 @@
 import cv2
 import numpy as np
+from rdp import rdp
 
 class process_img:
-    def __init__(self, img_path=None):
-        self.img_read = cv2.imread(img_path)
-        
-        self.img_in_processing = self.img_read
+    def __init__(self, img_path):
+        self.img_path = img_path
+        if self.img_path != None:
+            self.img_read = cv2.imread(self.img_path)
+            self.img_in_processing = self.img_read
+        else:
+            self.img_in_processing = 0
         self.contours = []
         self.heirarchy = []
         self.gray = []
@@ -93,24 +97,32 @@ def radius_intersect(cont1, cont2, radius = None):
 
 def find_aruco_corners(img,camera_matrix,dist_coeffs):
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
-    #img = cv2.imread(img) CHANGE IF USING GUI VS MAIN.PY
+    img = cv2.imread(img) #CHANGE IF USING GUI VS MAIN.PY
     #undistorted_image = cv2.undistort(img, camera_matrix, dist_coeffs) Undistort image if using distortion
     params = cv2.aruco.DetectorParameters()
     marker_corners, marker_ids, _ = cv2.aruco.detectMarkers(img, aruco_dict, parameters= params)
 
     return marker_corners
     
-def transform_points(path, corners):
+def transform_points(path, corners,ratio=None):
     x1,y1 = corners[0][0][0]
     x2,y2 = corners[0][0][1]
     theta = np.arctan((y1-y2)/(x1-x2)) 
 
-    path[:,:,:,0] = ((path[:,:,:,0]-x2)*np.cos(theta))+((y2-path[:,:,:,1])*np.sin(theta))   
-    path[:,:,:,1] = (-(path[:,:,:,0]-x2)*np.sin(theta))+((y2-path[:,:,:,1])*np.cos(theta))   
-    transformed_path = path
-    
+    path[:,:,:,0] = ((path[:,:,:,0]-x2)*np.cos(theta))+((y2-path[:,:,:,1])*np.sin(theta))
+    path[:,:,:,1] = (-(path[:,:,:,0]-x2)*np.sin(theta))+((y2-path[:,:,:,1])*np.cos(theta))
+    transformed_path = np.round(ratio*path,1)
     return transformed_path
 
+def intersect_cleanup(intersection_contour,e=None):
+    intersection_contour = intersection_contour.squeeze()
+    cleaned = rdp(intersection_contour,epsilon=e,algo="rec")
+    cleaned = cleaned[None,:,None]
+    print(np.size(cleaned))
+    return cleaned
+ 
+ 
+'''  Auto Calibration function isn't that great, manual calibration with a ruler works better (then double check by actually moving the machine)
 def mm_to_px_ratio(corners, aruco_size_mm=None):
     avg_dist = 0
     for i in range(len(corners[0][0])):
@@ -118,9 +130,7 @@ def mm_to_px_ratio(corners, aruco_size_mm=None):
     ratio = (aruco_size_mm*4)/avg_dist
     return ratio
     
-
-
-
+'''
 
 
 
